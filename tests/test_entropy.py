@@ -1,6 +1,7 @@
 from files.load_csv import read_csv
 from operations.calculate_entropy import calculate_entropies, info_decision
 from operations.calculate_gain import calculate_gain
+from operations.calculate_gain_ratio import calculate_gain_ratio
 from operations.count_occurrences_columns import count_occurrences
 
 
@@ -26,7 +27,24 @@ def test_info(path):
 
 if __name__ == "__main__":
     path_gielda = "../data/gielda.txt"
-    path_tab2 = "../data/testowaTabDec.txt"
-    test_entropy(path_gielda)
-    test_entropy(path_tab2)
-    test_info(path_gielda)
+
+    dataset = read_csv(path_gielda)
+    occurs = count_occurrences(dataset)
+    entropies = calculate_entropies(occurs)
+    print(f"Entropies for each column {entropies}")
+
+    info_decisions = []
+    for i in range(0, len(dataset[0]) - 1):
+        e = info_decision(dataset, i)
+        info_decisions.append(e)
+
+    print(f"Info for each column {info_decisions}")
+
+    gains = calculate_gain(1.0, info_decisions)
+    print(f"Gain for each column {gains}")
+
+    gain_ratios = []
+    for idx, val in enumerate(gains):
+        gain_ratios.append(calculate_gain_ratio(entropies[idx], val))
+
+    print(f"Gain ratio for each column {gain_ratios}")
